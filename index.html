@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TriOm | 이주배경 고등학생 올인원 솔루션</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo-mark" aria-hidden="true">
+            <span class="wing wing-left"></span>
+            <span class="wing wing-right"></span>
+            <span class="body"></span>
+          </div>
+          <div>
+            <strong>TriOm</strong>
+            <small>이주배경 고등학생의 수업, 진학, 취업을 한 번에 올인원 솔루션 ‘트리옴’</small>
+          </div>
+        </div>
+
+        <div class="global-controls">
+          <label>
+            언어
+            <select id="languageSelect">
+              <option value="ko">한국어</option>
+              <option value="vi">Tiếng Việt</option>
+              <option value="zh">中文</option>
+              <option value="en">English</option>
+              <option value="ru">Русский</option>
+              <option value="ja">日本語</option>
+            </select>
+          </label>
+          <label>
+            지역
+            <select id="regionSelect">
+              <option value="">전국</option>
+              <option value="서울">서울</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="경기">경기</option>
+              <option value="인천">인천</option>
+              <option value="광주">광주</option>
+              <option value="대전">대전</option>
+              <option value="울산">울산</option>
+              <option value="세종">세종</option>
+              <option value="강원">강원</option>
+              <option value="충북">충북</option>
+              <option value="충남">충남</option>
+              <option value="전북">전북</option>
+              <option value="전남">전남</option>
+              <option value="경북">경북</option>
+              <option value="경남">경남</option>
+              <option value="제주">제주</option>
+            </select>
+          </label>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="서비스 메뉴">
+        <button class="tab active" data-tab="classroom"><i data-lucide="book-open-check"></i>수업</button>
+        <button class="tab" data-tab="performance"><i data-lucide="clipboard-check"></i>수행평가</button>
+        <button class="tab" data-tab="college"><i data-lucide="graduation-cap"></i>진학</button>
+        <button class="tab" data-tab="job"><i data-lucide="briefcase-business"></i>취업</button>
+        <button class="tab" data-tab="sites"><i data-lucide="network"></i>유관 사이트</button>
+        <button class="tab" data-tab="dashboard"><i data-lucide="layout-dashboard"></i>마이</button>
+      </nav>
+
+      <main>
+        <section id="classroomSection" class="section active">
+          <div class="section-head">
+            <h1>수업 자료를 넣으면 내 언어로 같이 읽어줘요</h1>
+            <p>PPT나 PDF를 올리면 어려운 말은 쉽게 풀고, 번역과 질문, 연습 문제까지 한 번에 이어서 볼 수 있어요.</p>
+          </div>
+          <div class="lesson-toolbar">
+            <label class="upload-card">
+              <i data-lucide="upload-cloud"></i>
+              <span>수업자료 업로드</span>
+              <input id="pptUpload" type="file" accept=".pptx,.pdf,.docx,.txt" />
+            </label>
+            <label class="upload-card upload-card-secondary">
+              <i data-lucide="file-plus-2"></i>
+              <span>문제·읽기자료 업로드</span>
+              <input id="supportUpload" type="file" accept=".pptx,.docx,.pdf,.txt,.csv" />
+            </label>
+            <button id="loadSampleLesson" class="tool-btn"><i data-lucide="presentation"></i>중간고사 샘플 불러오기</button>
+            <div class="lesson-meta" id="lessonMeta">수업 자료 대기 중</div>
+          </div>
+          <div class="lesson-grid">
+            <article class="panel">
+              <div class="panel-top">
+                <h2>자료 페이지</h2>
+                <select id="slideSelect" aria-label="자료 페이지 선택"></select>
+              </div>
+              <div id="lessonDoc" class="lesson-doc empty"></div>
+              <div class="ask-box">
+                <label for="lessonQuestion">질문하기</label>
+                <div class="ask-row">
+                  <input id="lessonQuestion" type="text" placeholder="예: 수행평가 보고서 첫 문장을 어떻게 쓰지?" />
+                  <button id="lessonAskBtn" class="icon-btn" aria-label="질문 보내기"><i data-lucide="send"></i></button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h2>번역과 설명</h2>
+              <div class="result-box warm">
+                <span>쉬운 설명</span>
+                <p id="lessonEasyKo">모르는 단어를 누르면 쉬운 설명이 나와요.</p>
+              </div>
+              <div class="result-box cool">
+                <span id="lessonLangLabel">번역</span>
+                <p id="lessonLangText">언어를 고르면 바로 번역해서 보여줄게요.</p>
+              </div>
+              <div class="action-stack">
+                <h3>단어 풀이</h3>
+                <div id="lessonActions"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h2>연습 문제</h2>
+              <div class="stack">
+                <h3>이미지·영상 찾기</h3>
+                <div id="lessonMediaLinks"></div>
+              </div>
+              <div class="stack">
+                <h3>연결 자료</h3>
+                <div id="lessonStandards"></div>
+              </div>
+              <div class="stack">
+                <h3>AI 확인 문제</h3>
+                <div id="lessonQuestions"></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="performanceSection" class="section">
+          <div class="section-head">
+            <h1>수행평가 양식을 넣으면 글쓰기 순서를 같이 잡아줘요</h1>
+            <p>독후감, 보고서, 발표 자료를 올리면 평가 항목을 읽고 주제 문장, 근거, 분량 체크리스트로 바꿔줍니다.</p>
+          </div>
+          <div class="lesson-toolbar">
+            <label class="upload-card upload-card-tertiary">
+              <i data-lucide="clipboard-check"></i>
+              <span>수행평가 자료 업로드</span>
+              <input id="performanceUploadStandalone" type="file" accept=".pptx,.docx,.pdf,.txt,.csv" />
+            </label>
+            <button id="loadPerformanceSample" class="tool-btn"><i data-lucide="file-text"></i>통합사회 독후록 양식 불러오기</button>
+            <div class="lesson-meta" id="performanceMeta">통합사회 수행평가 양식 대기 중</div>
+          </div>
+          <div class="performance-grid">
+            <article class="panel">
+              <h2>수행평가 원문</h2>
+              <div id="performanceSourceView" class="lesson-doc"></div>
+            </article>
+            <article class="panel">
+              <h2>AI 작성 코치</h2>
+              <div id="performancePlan" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>제출 전 체크</h2>
+              <div id="performanceChecklist" class="stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="collegeSection" class="section">
+          <div class="section-head">
+            <h1>대학과 학과를 고르면 내가 볼 전형을 같이 찾아줘요</h1>
+            <p>학교 이름으로 찾아도 되고, 배우고 싶은 학과를 먼저 고른 뒤 갈 수 있는 대학을 살펴볼 수 있어요.</p>
+          </div>
+          <div class="quick-links" id="collegeLinks"></div>
+          <div class="mode-tabs" aria-label="진학 검색 방식">
+            <button class="mode-tab active" data-college-mode="university">대학으로 찾기</button>
+            <button class="mode-tab" data-college-mode="major">학과로 찾기</button>
+          </div>
+          <div class="college-layout">
+            <article class="panel">
+              <div class="panel-top">
+                <h2 id="collegeSearchTitle">대학 찾기</h2>
+                <input id="collegeSearchInput" type="text" placeholder="대학명 또는 학과 키워드" />
+              </div>
+              <div id="collegeList" class="list-scroller"></div>
+            </article>
+
+            <article class="panel">
+              <h2>내가 고른 대학</h2>
+              <div id="collegeInfo" class="info-card"></div>
+              <h3>관련 입시 요강</h3>
+              <div id="guideList" class="guide-list"></div>
+            </article>
+
+            <article class="panel">
+              <h2>요강 같이 보기</h2>
+              <div class="link-row guide-actions">
+                <a id="guideOpenLink" href="#" target="_blank" rel="noreferrer">요강 파일 열기</a>
+                <button id="downloadGuideTranslation" class="guide-btn">번역본 내려받기</button>
+              </div>
+              <div class="notice-box">이 번역은 기계 번역 초안이에요. 실제 지원 전에는 원문 요강, 대학 입학처, 담임·진로 선생님 확인을 꼭 함께 받아야 해요.</div>
+              <div class="result-box warm">
+                <span>외국인 전형 핵심</span>
+                <p id="guideCoreKo">대학이나 요강 파일을 먼저 골라주세요.</p>
+              </div>
+              <div class="result-box warm">
+                <span>외국인 전형 핵심 요약</span>
+                <p id="guidePreviewKo">대학이나 요강 파일을 먼저 골라주세요.</p>
+              </div>
+              <div class="result-box cool">
+                <span id="guideLangLabel">번역</span>
+                <p id="guidePreviewLang">번역한 내용은 여기에 보여줄게요.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="jobSection" class="section">
+          <div class="section-head">
+            <h1 data-i18n="jobTitle">관심 있는 일을 누르며 취업 길을 찾아봐요</h1>
+            <p data-i18n="jobSubtitle">큰 분야부터 하나씩 내려가면 직업 설명, 필요한 자격, 채용정보 링크를 같이 볼 수 있어요.</p>
+          </div>
+          <div class="job-layout">
+            <article class="panel">
+              <h2 data-i18n="majorGroup">대분류</h2>
+              <div id="majorGroupList" class="pill-list"></div>
+            </article>
+            <article class="panel">
+              <h2 data-i18n="middleClass">중분류</h2>
+              <div id="middleClassList" class="pill-list"></div>
+            </article>
+            <article class="panel">
+              <h2 data-i18n="jobDetail">소분류 직업</h2>
+              <div id="jobDetailList" class="pill-list"></div>
+            </article>
+          </div>
+
+          <div class="three-col">
+            <article class="panel">
+              <h2 data-i18n="jobDescription">직업 설명</h2>
+              <div class="result-box warm">
+                <span>한국어</span>
+                <p id="jobDescKo">직업을 고르면 어떤 일을 하는지 쉽게 알려줄게요.</p>
+              </div>
+              <div class="result-box cool">
+                <span id="jobLangLabel">번역</span>
+                <p id="jobDescLang">번역한 내용은 여기에 보여줄게요.</p>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h2 data-i18n="qualifications">관련 자격</h2>
+              <div id="jobQualifications" class="stack"></div>
+            </article>
+
+            <article class="panel">
+              <h2 data-i18n="jobSearch">채용 자리 찾기</h2>
+              <div id="jobSearchLinks" class="stack"></div>
+            </article>
+          </div>
+          <div class="three-col job-extra">
+            <article class="panel">
+              <h2>관련 기업</h2>
+              <div id="jobCompanies" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>최신 뉴스</h2>
+              <div id="jobNews" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>근로계약 체크</h2>
+              <div class="contract-tools">
+                <label class="mini-upload">
+                  계약서 업로드
+                  <input id="contractUpload" type="file" accept=".pdf,.docx,.txt,.csv" />
+                </label>
+                <textarea id="contractText" placeholder="근로계약서 내용을 붙여넣어도 괜찮아요."></textarea>
+                <button id="reviewContractBtn" class="tool-btn">계약서 검토</button>
+                <div class="notice-box">이 검토는 법률 판단이 아니라 빠진 항목을 함께 찾아보는 점검이에요. 실제 서명 전에는 EPS, 고용노동부, 학교·기관 상담으로 꼭 다시 확인해요.</div>
+                <div class="quick-links">
+                  <a href="https://www.eps.go.kr/index.jsp" target="_blank" rel="noreferrer">EPS 외국인고용관리</a>
+                  <a href="https://www.moel.go.kr/" target="_blank" rel="noreferrer">고용노동부</a>
+                </div>
+              </div>
+              <div id="contractReviewResult" class="stack"></div>
+              <div id="jobContract" class="stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="dashboardSection" class="section">
+          <div class="section-head">
+            <h1>내가 본 수업과 관심 진로를 한곳에 모아봐요</h1>
+            <p>오늘 공부한 페이지, 눌러본 대학과 직업을 나중에 다시 볼 수 있게 모아둘 수 있어요.</p>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel">
+              <h2>교사용 지표</h2>
+              <div id="teacherMetrics" class="metric-grid"></div>
+            </article>
+            <article class="panel dashboard-wide">
+              <div class="panel-top">
+                <h2>학교 누적 데이터</h2>
+                <span class="doc-chip">학기별 추이</span>
+              </div>
+              <div id="schoolTrendDashboard"></div>
+            </article>
+            <article class="panel">
+              <h2>수업 노트</h2>
+              <button id="saveLessonBtn" class="tool-btn"><i data-lucide="bookmark-plus"></i>현재 페이지 담기</button>
+              <div id="savedLessons" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>관심 진학</h2>
+              <button id="saveCollegeBtn" class="tool-btn"><i data-lucide="bookmark-plus"></i>현재 대학·학과 담기</button>
+              <div id="savedColleges" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>관심 취업</h2>
+              <button id="saveJobBtn" class="tool-btn"><i data-lucide="bookmark-plus"></i>현재 직업 담기</button>
+              <div id="savedJobs" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>수행평가 자료</h2>
+              <button id="savePerformanceBtn" class="tool-btn"><i data-lucide="bookmark-plus"></i>현재 수행평가 담기</button>
+              <div id="savedPerformances" class="stack"></div>
+            </article>
+            <article class="panel">
+              <h2>학생 질문함</h2>
+              <div id="teacherQuestions" class="stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="sitesSection" class="section">
+          <div class="section-head">
+            <h1>도움이 필요할 때 바로 갈 수 있는 곳이에요</h1>
+            <p>언어, 체류, 가족상담, 정서지원, 학습, 취업 정보를 기관별로 찾아볼 수 있어요.</p>
+          </div>
+          <div class="panel">
+            <div id="relatedSites" class="site-grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
